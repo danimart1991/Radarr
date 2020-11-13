@@ -18,9 +18,11 @@
     <PackageReference Include="System.Data.SQLite.Core.Servarr" Version="1.0.113.0-0" />
     <PackageReference Include="System.Text.Json" Version="5.0.1" />
     <PackageReference Include="MonoTorrent" Version="1.0.19" />
+    <PackageReference Include="TMDbLib" Version="1.6.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NzbDrone.Common\Radarr.Common.csproj" />
+    <ProjectReference Include="..\Tmdb.Wrapper\Tmdb.Wrapper.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
     <Reference Include="System.Web" />

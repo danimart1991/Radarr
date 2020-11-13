@@ -18,7 +18,8 @@ namespace Radarr.Host
                                  "Radarr.Api",
                                  "Radarr.SignalR",
                                  "Radarr.Api.V3",
-                                 "Radarr.Http"
+                                 "Radarr.Http",
+                                 "Tmdb.Wrapper"
                              };
 
             return new MainAppContainerBuilder(args, assemblies).Container;
