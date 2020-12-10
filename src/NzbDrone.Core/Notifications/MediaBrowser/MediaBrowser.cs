@@ -32,18 +32,12 @@ namespace NzbDrone.Core.Notifications.Emby
                 _mediaBrowserService.Notify(Settings, MOVIE_DOWNLOADED_TITLE_BRANDED, message.Message);
             }
 
-            if (Settings.UpdateLibrary)
-            {
-                _mediaBrowserService.UpdateMovies(Settings, message.Movie, "Created");
-            }
+            UpdateRefreshLibraryIsNeeded(message.Movie);
         }
 
         public override void OnMovieRename(Movie movie)
         {
-            if (Settings.UpdateLibrary)
-            {
-                _mediaBrowserService.UpdateMovies(Settings, movie, "Modified");
-            }
+            UpdateRefreshLibraryIsNeeded(movie);
         }
 
         public override void OnHealthIssue(HealthCheck.HealthCheck message)
@@ -61,6 +55,30 @@ namespace NzbDrone.Core.Notifications.Emby
             failures.AddIfNotNull(_mediaBrowserService.Test(Settings));
 
             return new ValidationResult(failures);
+        }
+
+        private void UpdateRefreshLibraryIsNeeded(Movie movie)
+        {
+            if (movie != null && Settings.UpdateLibraryMode > 0)
+            {
+                if (Settings.UpdateLibraryDelay > 0)
+                {
+                    var timeSpan = new TimeSpan(0, Settings.UpdateLibraryDelay, 0);
+                    System.Threading.Thread.Sleep(timeSpan);
+                }
+
+                switch (Settings.UpdateLibraryMode)
+                {
+                    case 1:
+                        _logger.Debug("{0} - Scheduling library update for created movie {1} {2}", Name, movie.Id, movie.Title);
+                        _mediaBrowserService.UpdateMovies(Settings, movie, "Created");
+                        break;
+                    case 2:
+                        _logger.Debug("{0} - Scheduling library refresh");
+                        _mediaBrowserService.RefreshMovies(Settings);
+                        break;
+                }
+            }
         }
     }
 }

@@ -28,7 +28,7 @@ namespace NzbDrone.Core.Notifications.Emby
                 ImageUrl = "https://raw.github.com/Radarr/Radarr/develop/Logo/64.png"
             }.ToJson());
 
-            ProcessRequest(request, settings);
+            ProcessPostRequest(request, settings);
         }
 
         public void UpdateMovies(MediaBrowserSettings settings, string moviePath, string updateType)
@@ -49,13 +49,29 @@ namespace NzbDrone.Core.Notifications.Emby
                 }
             }.ToJson());
 
-            ProcessRequest(request, settings);
+            ProcessPostRequest(request, settings);
         }
 
-        private string ProcessRequest(HttpRequest request, MediaBrowserSettings settings)
+        public void RefreshMovies(MediaBrowserSettings settings)
         {
-            request.Headers.Add("X-MediaBrowser-Token", settings.ApiKey);
+            var path = "/Library/Refresh";
+            var request = BuildRequest(path, settings);
 
+            ProcessGetRequest(request, settings);
+        }
+
+        private string ProcessGetRequest(HttpRequest request, MediaBrowserSettings settings)
+        {
+            var response = _httpClient.Get(request);
+            _logger.Trace("Response: {0}", response.Content);
+
+            CheckForError(response);
+
+            return response.Content;
+        }
+
+        private string ProcessPostRequest(HttpRequest request, MediaBrowserSettings settings)
+        {
             var response = _httpClient.Post(request);
             _logger.Trace("Response: {0}", response.Content);
 
@@ -69,7 +85,10 @@ namespace NzbDrone.Core.Notifications.Emby
             var scheme = settings.UseSsl ? "https" : "http";
             var url = $@"{scheme}://{settings.Address}/mediabrowser";
 
-            return new HttpRequestBuilder(url).Resource(path).Build();
+            var request = new HttpRequestBuilder(url).Resource(path).Build();
+            request.Headers.Add("X-MediaBrowser-Token", settings.ApiKey);
+
+            return request;
         }
 
         private void CheckForError(HttpResponse response)

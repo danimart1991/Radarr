@@ -11,6 +11,7 @@ namespace NzbDrone.Core.Notifications.Emby
     {
         void Notify(MediaBrowserSettings settings, string title, string message);
         void UpdateMovies(MediaBrowserSettings settings, Movie movie, string updateType);
+        void RefreshMovies(MediaBrowserSettings settings);
         ValidationFailure Test(MediaBrowserSettings settings);
     }
 
@@ -33,6 +34,11 @@ namespace NzbDrone.Core.Notifications.Emby
         public void UpdateMovies(MediaBrowserSettings settings, Movie movie, string updateType)
         {
             _proxy.UpdateMovies(settings, movie.Path, updateType);
+        }
+
+        public void RefreshMovies(MediaBrowserSettings settings)
+        {
+            _proxy.RefreshMovies(settings);
         }
 
         public ValidationFailure Test(MediaBrowserSettings settings)

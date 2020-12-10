@@ -39,8 +39,8 @@ namespace NzbDrone.Core.Notifications.Emby
         [FieldDefinition(4, Label = "Send Notifications", HelpText = "Have MediaBrowser send notfications to configured providers", Type = FieldType.Checkbox)]
         public bool Notify { get; set; }
 
-        [FieldDefinition(5, Label = "Update Library", HelpText = "Update Library on Import & Rename?", Type = FieldType.Checkbox)]
-        public bool UpdateLibrary { get; set; }
+        [FieldDefinition(5, Label = "Update Library", HelpText = "Update/Refresh Library on Import & Rename?", Type = FieldType.Select, SelectOptions = typeof(MediaBrowserUpdateMode))]
+        public int UpdateLibraryMode { get; set; }
 
         [JsonIgnore]
         public string Address => $"{Host}:{Port}";
