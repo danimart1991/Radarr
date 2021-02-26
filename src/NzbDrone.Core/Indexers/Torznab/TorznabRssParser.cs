@@ -177,6 +177,13 @@ namespace NzbDrone.Core.Indexers.Torznab
         {
             IndexerFlags flags = 0;
 
+            var description = item.TryGetValue("description");
+
+            if (description.ContainsIgnoreCase(IndexerFlags.G_Scene.ToString()))
+            {
+                flags |= IndexerFlags.G_Scene;
+            }
+
             var downloadFactor = TryGetFloatTorznabAttribute(item, "downloadvolumefactor", 1);
 
             var uploadFactor = TryGetFloatTorznabAttribute(item, "uploadvolumefactor", 1);
